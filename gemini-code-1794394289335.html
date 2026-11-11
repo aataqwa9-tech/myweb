@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathSolver SMA - Solusi Pintar Matematika SMA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-square-root-variable text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight">MathSolver <span class="text-indigo-600 dark:text-indigo-400">SMA</span></h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Asisten Penyelesai Soal & Rumus SMA</p>
+                </div>
+            </div>
+
+            <!-- Dark Mode Toggle -->
+            <button onclick="toggleDarkMode()" id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                <i class="fa-solid fa-sun hidden dark:inline text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 space-y-8">
+        
+        <!-- Hero Search Section -->
+        <section class="text-center space-y-4">
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Mau cari jawaban soal apa hari ini?</h2>
+            <p class="text-slate-600 dark:text-slate-400 max-w-lg mx-auto text-sm sm:text-base">
+                Ketikkan topik, rumus, atau pilih pertanyaan dari daftar latihan soal di bawah untuk melihat pembahasan langkah demi langkah.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-2xl mx-auto">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    oninput="handleSearch()"
+                    placeholder="Contoh: Turunan, Persamaan Kuadrat, Barisan Aritmatika..." 
+                    class="w-full pl-11 pr-24 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base transition"
+                >
+                <button onclick="clearSearch()" id="clearBtn" class="hidden absolute inset-y-0 right-3 flex items-center px-3 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- Kategori Materi Cepat -->
+        <section class="space-y-3">
+            <h3 class="text-sm font-semibold tracking-wider uppercase text-slate-400 dark:text-slate-500">Kategori Materi SMA</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                <button onclick="filterCategory('Aljabar')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-calculator text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Aljabar</p>
+                </button>
+                <button onclick="filterCategory('Fungsi')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-chart-line text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Fungsi & Grafik</p>
+                </button>
+                <button onclick="filterCategory('Kalkulus')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-wave-square text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Kalkulus</p>
+                </button>
+                <button onclick="filterCategory('Trigonometri')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-shapes text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Trigonometri</p>
+                </button>
+                <button onclick="filterCategory('Statistika')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-chart-column text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Statistika</p>
+                </button>
+                <button onclick="filterCategory('Barisan')" class="cat-btn p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center hover:border-indigo-500 dark:hover:border-indigo-500 transition group">
+                    <i class="fa-solid fa-list-ol text-indigo-500 mb-1.5 text-lg group-hover:scale-110 transition-transform"></i>
+                    <p class="text-xs font-medium">Barisan & Deret</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- Interactive Calculators Section -->
+        <section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
+                    <h3 class="font-semibold">Kalkulator Cepat Rumus SMA</h3>
+                </div>
+                <select id="calcSelector" onchange="switchCalculator()" class="bg-slate-100 dark:bg-slate-700 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg border-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="kuadrat">Persamaan Kuadrat (ax² + bx + c = 0)</option>
+                    <option value="aritmatika">Barisan Aritmatika (Un)</option>
+                    <option value="statistika">Rata-rata (Mean) Data Tunggal</option>
+                </select>
+            </div>
+
+            <!-- Calculator 1: Persamaan Kuadrat -->
+            <div id="calc-kuadrat" class="calc-panel space-y-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan koefisien a, b, dan c untuk mencari akar-akar $x_1$ dan $x_2$ beserta Diskriminannya.</p>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Nilai a</label>
+                        <input type="number" id="q_a" value="1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Nilai b</label>
+                        <input type="number" id="q_b" value="-5" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Nilai c</label>
+                        <input type="number" id="q_c" value="6" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                </div>
+                <button onclick="hitungKuadrat()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition">Hitung Akar-Akar</button>
+                <div id="result-kuadrat" class="hidden p-3 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 rounded-xl text-xs sm:text-sm space-y-1"></div>
+            </div>
+
+            <!-- Calculator 2: Barisan Aritmatika -->
+            <div id="calc-aritmatika" class="calc-panel hidden space-y-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Mencari suku ke-n ($U_n$) dan jumlah n suku pertama ($S_n$).</p>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Suku Pertama (a / U₁)</label>
+                        <input type="number" id="ar_a" value="3" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Beda (b)</label>
+                        <input type="number" id="ar_b" value="4" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium block mb-1">Cari Suku ke-n (n)</label>
+                        <input type="number" id="ar_n" value="10" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    </div>
+                </div>
+                <button onclick="hitungAritmatika()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition">Hitung Un & Sn</button>
+                <div id="result-aritmatika" class="hidden p-3 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 rounded-xl text-xs sm:text-sm space-y-1"></div>
+            </div>
+
+            <!-- Calculator 3: Statistika Mean -->
+            <div id="calc-statistika" class="calc-panel hidden space-y-3">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan deretan angka dipisahkan dengan koma (contoh: 75, 80, 90, 60, 85).</p>
+                <div>
+                    <label class="text-xs font-medium block mb-1">Data Nilai</label>
+                    <input type="text" id="stat_data" value="80, 75, 90, 85, 70" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                </div>
+                <button onclick="hitungStatistika()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition">Hitung Rata-Rata & Total</button>
+                <div id="result-statistika" class="hidden p-3 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 rounded-xl text-xs sm:text-sm space-y-1"></div>
+            </div>
+        </section>
+
+        <!-- Daftar Soal & Jawaban -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-lg">Daftar Bank Soal & Pembahasan</h3>
+                <span id="soalCount" class="text-xs px-2.5 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 rounded-full font-semibold">6 Soal</span>
+            </div>
+
+            <div id="soalContainer" class="space-y-4">
+                <!-- Data soal akan dirender secara dinamis lewat JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+        <p>&copy; 2026 MathSolver SMA. Siap dijalankan di VS Code secara lokal.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Database Bank Soal SMA
+        const bankSoal = [
+            {
+                id: 1,
+                kategori: "Aljabar",
+                soal: "Tentukan himpunan penyelesaian dari persamaan kuadrat: x² - 5x + 6 = 0",
+                rumus: "Rumus ABC: x = (-b ± √(b² - 4ac)) / 2a",
+                langkah: [
+                    "Identifikasi nilai koefisien: a = 1, b = -5, c = 6.",
+                    "Gunakan pemfaktoran atau rumus kuadrat. Mencari dua bilangan jika dikalikan hasilnya 6, jika dijumlahkan hasilnya -5. Bilangan tersebut adalah -2 dan -3.",
+                    "Diperoleh bentuk pemfaktoran: (x - 2)(x - 3) = 0.",
+                    "Maka akar-akarnya adalah x = 2 atau x = 3."
+                ],
+                jawaban: "HP = {2, 3}"
+            },
+            {
+                id: 2,
+                kategori: "Kalkulus",
+                soal: "Tentukan turunan pertama dari fungsi f(x) = 4x³ - 5x² + 7x - 9",
+                rumus: "Aturan pangkat turunan: d/dx(ax^n) = a · n · x^(n-1)",
+                langkah: [
+                    "Terapkan aturan turunan satu per satu pada setiap suku.",
+                    "Suku pertama: 4(3)x^(3-1) = 12x².",
+                    "Suku kedua: -5(2)x^(2-1) = -10x.",
+                    "Suku ketiga: 7(1)x^(1-1) = 7.",
+                    "Suku keempat (konstanta): turunan dari angka tetap adalah 0."
+                ],
+                jawaban: "f'(x) = 12x² - 10x + 7"
+            },
+            {
+                id: 3,
+                kategori: "Barisan",
+                soal: "Suku ke-3 suatu barisan aritmatika adalah 11 dan suku ke-7 adalah 27. Tentukan suku ke-15 (U₁₅)!",
+                rumus: "U_n = a + (n - 1)b",
+                langkah: [
+                    "Buat persamaan dari data yang diketahui: U₃ = a + 2b = 11 dan U₇ = a + 6b = 27.",
+                    "Eliminasi persamaan: (a + 6b = 27) dikurangi (a + 2b = 11) menghasilkan 4b = 16, maka b = 4.",
+                    "Substitusi nilai b ke persamaan pertama: a + 2(4) = 11 => a + 8 = 11 => a = 3.",
+                    "Hitung U₁₅ menggunakan rumus: U₁₅ = 3 + (15 - 1)4 = 3 + 14(4) = 3 + 56 = 59."
+                ],
+                jawaban: "U₁₅ = 59"
+            },
+            {
+                id: 4,
+                kategori: "Trigonometri",
+                soal: "Diketahui segitiga siku-siku ABC siku-siku di B. Jika panjang sisi AB = 3 cm dan BC = 4 cm, berapakah nilai sin A?",
+                rumus: "sin A = Sisi depan / Sisi miring (de/mi)",
+                langkah: [
+                    "Cari panjang sisi miring (AC) menggunakan Teorema Pythagoras: AC = √(AB² + BC²).",
+                    "AC = √(3² + 4²) = √(9 + 16) = √25 = 5 cm.",
+                    "Tentukan sisi depan sudut A yaitu sisi BC = 4 cm, dan sisi miring AC = 5 cm.",
+                    "Hitung sin A = BC / AC = 4 / 5."
+                ],
+                jawaban: "sin A = 4/5 (atau 0,8)"
+            },
+            {
+                id: 5,
+                kategori: "Statistika",
+                soal: "Nilai ulangan matematika 5 orang siswa adalah: 70, 80, 85, 90, 75. Berapakah nilai rata-rata (mean) mereka?",
+                rumus: "Mean = Jumlah semua nilai / Banyak data",
+                langkah: [
+                    "Jumlahkan seluruh nilai data: 70 + 80 + 85 + 90 + 75 = 400.",
+                    "Hitung jumlah siswa (banyak data) n = 5.",
+                    "Bagi total nilai dengan banyak data: Mean = 400 / 5 = 80."
+                ],
+                jawaban: "Rata-rata = 80"
+            },
+            {
+                id: 6,
+                kategori: "Fungsi",
+                soal: "Jika f(x) = 2x + 3 dan g(x) = x² - 1, tentukan rumus fungsi komposisi (f ∘ g)(x)!",
+                rumus: "(f ∘ g)(x) = f(g(x))",
+                langkah: [
+                    "Masukkan fungsi g(x) ke dalam fungsi f(x).",
+                    "(f ∘ g)(x) = f(g(x)) = f(x² - 1).",
+                    "Substitusikan (x² - 1) ke posisi x pada fungsi f(x): 2(x² - 1) + 3.",
+                    "Sederhanakan bentuk aljabarnya: 2x² - 2 + 3 = 2x² + 1."
+                ],
+                jawaban: "(f ∘ g)(x) = 2x² + 1"
+            }
+        ];
+
+        let activeCategory = 'All';
+
+        // Render Soal ke HTML
+        function renderSoal(data) {
+            const container = document.getElementById('soalContainer');
+            document.getElementById('soalCount').innerText = `${data.length} Soal`;
+            
+            if(data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
+                        <p class="font-medium text-slate-700 dark:text-slate-300">Tidak ada soal yang sesuai dengan pencarian Anda.</p>
+                        <p class="text-xs text-slate-400 mt-1">Coba kata kunci lain atau pilih kategori berbeda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4 shadow-sm transition hover:shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">${item.kategori}</span>
+                        <span class="text-xs text-slate-400 font-mono">Soal #${item.id}</span>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-sm sm:text-base text-slate-900 dark:text-slate-100">${item.soal}</h4>
+                        <p class="text-xs text-indigo-600 dark:text-indigo-400 mt-1 font-medium"><i class="fa-solid fa-book-bookmark mr-1"></i> ${item.rumus}</p>
+                    </div>
+
+                    <!-- Tombol Toggle Pembahasan -->
+                    <button onclick="togglePembahasan(${item.id})" id="btn-text-${item.id}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center space-x-1">
+                        <span>Lihat Pembahasan Lengkap</span>
+                        <i id="icon-${item.id}" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                    </button>
+
+                    <!-- Bagian Pembahasan Tersembunyi -->
+                    <div id="pembahasan-${item.id}" class="hidden pt-3 border-t border-slate-100 dark:border-slate-700 space-y-3">
+                        <div class="space-y-1.5">
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Langkah-langkah Penyelesaian:</p>
+                            <ol class="list-decimal list-inside text-xs sm:text-sm space-y-1 text-slate-600 dark:text-slate-300">
+                                ${item.langkah.map(l => `<li>${l}</li>`).join('')}
+                            </ol>
+                        </div>
+                        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Jawaban Akhir</span>
+                                <span class="font-bold text-emerald-900 dark:text-emerald-200 text-sm">${item.jawaban}</span>
+                            </div>
+                            <button onclick="copyText('${item.jawaban}')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium transition flex items-center space-x-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Salin</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle Accordion Pembahasan
+        function togglePembahasan(id) {
+            const panel = document.getElementById(`pembahasan-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            const btnText = document.getElementById(`btn-text-${id}`).querySelector('span');
+
+            panel.classList.toggle('hidden');
+            if (panel.classList.contains('hidden')) {
+                btnText.innerText = "Lihat Pembahasan Lengkap";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                btnText.innerText = "Tutup Pembahasan";
+                icon.style.transform = "rotate(180deg)";
+            }
+        }
+
+        // Search & Filter Logic
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const clearBtn = document.getElementById('clearBtn');
+            
+            if(query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const filtered = bankSoal.filter(item => {
+                const matchCategory = activeCategory === 'All' || item.kategori === activeCategory;
+                const matchText = item.soal.toLowerCase().includes(query) || item.kategori.toLowerCase().includes(query) || item.jawaban.toLowerCase().includes(query);
+                return matchCategory && matchText;
+            });
+
+            renderSoal(filtered);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearBtn').classList.add('hidden');
+            filterCategory(activeCategory);
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            
+            // Highlight active button style
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-950/20');
+                if(btn.innerText.includes(cat) || (cat === 'All')) {
+                    // opsional style active indicator
+                }
+            });
+
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = bankSoal.filter(item => {
+                const matchCategory = cat === 'All' || item.kategori === cat;
+                const matchText = item.soal.toLowerCase().includes(query) || item.jawaban.toLowerCase().includes(query);
+                return matchCategory && matchText;
+            });
+
+            renderSoal(filtered);
+        }
+
+        // Kalkulator Interaktif Switch
+        function switchCalculator() {
+            const val = document.getElementById('calcSelector').value;
+            document.querySelectorAll('.calc-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`calc-${val}`).classList.remove('hidden');
+        }
+
+        // Hitung Persamaan Kuadrat
+        function hitungKuadrat() {
+            const a = parseFloat(document.getElementById('q_a').value);
+            const b = parseFloat(document.getElementById('q_b').value);
+            const c = parseFloat(document.getElementById('q_c').value);
+            const resBox = document.getElementById('result-kuadrat');
+
+            if(isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("Masukkan angka yang valid!");
+                return;
+            }
+
+            const D = (b * b) - (4 * a * c);
+            resBox.classList.remove('hidden');
+
+            if(D < 0) {
+                resBox.innerHTML = `Diskriminan (D) = ${D}. Karena D < 0, maka akar-akar persamaan kuadrat adalah <strong>bilangan imajiner (tidak real)</strong>.`;
+            } else {
+                const x1 = (-b + Math.sqrt(D)) / (2 * a);
+                const x2 = (-b - Math.sqrt(D)) / (2 * a);
+                resBox.innerHTML = `Diskriminan (D) = b² - 4ac = <strong>${D}</strong><br>Akar-akar: x₁ = <strong>${x1}</strong> dan x₂ = <strong>${x2}</strong>`;
+            }
+        }
+
+        // Hitung Barisan Aritmatika
+        function hitungAritmatika() {
+            const a = parseFloat(document.getElementById('ar_a').value);
+            const b = parseFloat(document.getElementById('ar_b').value);
+            const n = parseInt(document.getElementById('ar_n').value);
+            const resBox = document.getElementById('result-aritmatika');
+
+            if(isNaN(a) || isNaN(b) || isNaN(n)) {
+                alert("Masukkan angka yang valid!");
+                return;
+            }
+
+            const Un = a + (n - 1) * b;
+            const Sn = (n / 2) * (2 * a + (n - 1) * b);
+            
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = `Suku ke-${n} (U<sub>${n}</sub>) = <strong>${Un}</strong><br>Jumlah ${n} suku pertama (S<sub>${n}</sub>) = <strong>${Sn}</strong>`;
+        }
+
+        // Hitung Statistika Mean
+        function hitungStatistika() {
+            const inputVal = document.getElementById('stat_data').value;
+            const resBox = document.getElementById('result-statistika');
+            
+            const arr = inputVal.split(',').map(item => parseFloat(item.trim())).filter(num => !isNaN(num));
+
+            if(arr.length === 0) {
+                alert("Masukkan data angka yang valid dipisahkan dengan koma!");
+                return;
+            }
+
+            const total = arr.reduce((acc, curr) => acc + curr, 0);
+            const mean = total / arr.length;
+
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = `Banyak Data (n) = ${arr.length}<br>Jumlah Total = ${total}<br>Rata-Rata (Mean) = <strong>${mean.toFixed(2)}</strong>`;
+        }
+
+        // Salin Teks
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Jawaban berhasil disalin ke clipboard: " + text);
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+        }
+
+        // Inisialisasi Pertama
+        renderSoal(bankSoal);
+    </script>
+</body>
+</html>
