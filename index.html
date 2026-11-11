@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathSolver SMA - Cari Jawaban Matematika</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax untuk render rumus matematika -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: -1.5rem auto 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .cat-chip {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+        }
+
+        .cat-chip:hover, .cat-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .result-section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .problem-item {
+            border-left: 4px solid var(--primary);
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .problem-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .problem-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .problem-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .problem-content {
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .solution-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0;
+        }
+
+        .solution-box {
+            margin-top: 0.75rem;
+            padding: 1rem;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+            display: none;
+        }
+
+        .solution-box.show {
+            display: block;
+        }
+
+        .no-result {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-square-root-variable"></i> MathSolver SMA</h1>
+        <p>Bank Soal dan Kunci Jawaban Matematika Kelas X, XI, & XII</p>
+    </header>
+
+    <div class="container">
+        <!-- Kotak Pencarian -->
+        <div class="card">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Cari soal (contoh: turunan, matriks, barisan aritmatika)..." onkeyup="filterProblems()">
+                <button class="btn" onclick="filterProblems()"><i class="fa-solid fa-search"></i> Cari</button>
+            </div>
+
+            <div class="categories">
+                <div class="cat-chip active" onclick="setCategory('all', this)">Semua Bab</div>
+                <div class="cat-chip" onclick="setCategory('Aljabar', this)">Aljabar</div>
+                <div class="cat-chip" onclick="setCategory('Trigonometri', this)">Trigonometri</div>
+                <div class="cat-chip" onclick="setCategory('Kalkulus', this)">Kalkulus</div>
+                <div class="cat-chip" onclick="setCategory('Statistika', this)">Statistika</div>
+            </div>
+        </div>
+
+        <!-- Bagian Hasil Pencarian / Daftar Soal -->
+        <div class="card result-section">
+            <h3><i class="fa-solid fa-book-open"></i> Daftar Soal & Pembahasan</h3>
+            <div id="problemList">
+                <!-- Data soal akan dimuat secara dinamis dengan JavaScript -->
+            </div>
+            <div id="noResult" class="no-result" style="display: none;">
+                <i class="fa-solid fa-face-sad-tear fa-2x" style="margin-bottom: 0.5rem; color: #cbd5e1;"></i><br>
+                Soal tidak ditemukan. Coba kata kunci lain!
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 MathSolver SMA. Dibuat untuk membantu belajar matematika siswa SMA.
+    </footer>
+
+    <script>
+        // Database Soal Matematika SMA
+        const problems = [
+            {
+                id: 1,
+                title: "Turunan Fungsi Aljabar",
+                category: "Kalkulus",
+                class: "Kelas XI",
+                question: "Tentukan turunan pertama dari fungsi $f(x) = 4x^3 - 5x^2 + 7x - 9$.",
+                solution: "Menggunakan aturan pangkat turunan $\\frac{d}{dx}(ax^n) = anx^{n-1}$:<br>• Turunan dari $4x^3$ adalah $3 \\cdot 4x^{3-1} = 12x^2$<br>• Turunan dari $-5x^2$ adalah $2 \\cdot (-5)x^{2-1} = -10x$<br>• Turunan dari $7x$ adalah $7$<br>• Turunan dari konstanta $-9$ adalah $0$<br><b>Hasil akhir:</b> $f'(x) = 12x^2 - 10x + 7$"
+            },
+            {
+                id: 2,
+                title: "Barisan Aritmatika",
+                category: "Aljabar",
+                class: "Kelas X",
+                question: "Diketahui barisan aritmatika: 3, 7, 11, 15, ... Tentukan suku ke-20 ($U_{20}$) dari barisan tersebut.",
+                solution: "Diketahui suku pertama $a = 3$ dan beda $b = 7 - 3 = 4$.<br>Rumus suku ke-$n$: $U_n = a + (n-1)b$<br>Maka untuk $U_{20}$:<br>$U_{20} = 3 + (20-1)4$<br>$U_{20} = 3 + (19 \\cdot 4)$<br>$U_{20} = 3 + 76 = 79$.<br><b>Hasil akhir:</b> $79$"
+            },
+            {
+                id: 3,
+                title: "Nilai Maksimum Trigonometri",
+                category: "Trigonometri",
+                class: "Kelas XI",
+                question: "Tentukan nilai maksimum dari fungsi $f(x) = 5 \\sin(x) + 2$.",
+                solution: "Nilai maksimum dari fungsi sinus dasar $\\sin(x)$ adalah $1$.<br>Maka nilai maksimum dari $5 \\sin(x) + 2$ dicapai saat $\\sin(x) = 1$:<br>$f(x)_{max} = 5(1) + 2 = 5 + 2 = 7$.<br><b>Hasil akhir:</b> $7$"
+            },
+            {
+                id: 4,
+                title: "Simpangan Rata-Rata Statistika",
+                category: "Statistika",
+                class: "Kelas XII",
+                question: "Tentukan simpangan rata-rata dari data: 4, 6, 8, 5, 7.",
+                solution: "1. Cari rata-rata ($\\bar{x}$) terlebih dahulu:<br>$\\bar{x} = \\frac{4 + 6 + 8 + 5 + 7}{5} = \\frac{30}{5} = 6$<br>2. Hitung selisih mutlak setiap data dengan rata-rata:<br>$|4-6| + |6-6| + |8-6| + |5-6| + |7-6| = 2 + 0 + 2 + 1 + 1 = 6$<br>3. Bagi dengan banyaknya data ($n = 5$):<br>$\\text{SR} = \\frac{6}{5} = 1,2$<br><b>Hasil akhir:</b> $1,2$"
+            },
+            {
+                id: 5,
+                title: "Integral Tentu",
+                category: "Kalkulus",
+                class: "Kelas XII",
+                question: "Hitung nilai dari integral tentu berikut: $\\int_{0}^{2} (3x^2 + 2x) \\, dx$.",
+                solution: "1. Tentukan integral tak tentu dari fungsi:<br>$\\int (3x^2 + 2x) \\, dx = x^3 + x^2$<br>2. Masukkan batas atas ($2$) dan batas bawah ($0$):<br>$[2^3 + 2^2] - [0^3 + 0^2] = [8 + 4] - [0] = 12$.<br><b>Hasil akhir:</b> $12$"
+            },
+            {
+                id: 6,
+                title: "Persamaan Kuadrat",
+                category: "Aljabar",
+                class: "Kelas X",
+                question: "Tentukan akar-akar dari persamaan kuadrat $x^2 - 5x + 6 = 0$.",
+                solution: "Gunakan cara pemfaktoran mencari dua angka yang jika dikalikan hasilnya $6$ dan jika dijumlahkan hasilnya $-5$. Angka tersebut adalah $-2$ dan $-3$.<br>$(x - 2)(x - 3) = 0$<br>Maka akar-akarnya adalah $x = 2$ atau $x = 3$.<br><b>Hasil akhir:</b> $x_1 = 2, x_2 = 3$"
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        // Fungsi Render Daftar Soal
+        function renderProblems(data) {
+            const listContainer = document.getElementById('problemList');
+            const noResultEl = document.getElementById('noResult');
+            listContainer.innerHTML = '';
+
+            if (data.length === 0) {
+                noResultEl.style.display = 'block';
+                return;
+            } else {
+                noResultEl.style.display = 'none';
+            }
+
+            data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'problem-item';
+                div.innerHTML = `
+                    <div class="problem-title">${item.title}</div>
+                    <div class="problem-meta">
+                        <span><i class="fa-solid fa-layer-group"></i> ${item.category}</span>
+                        <span><i class="fa-solid fa-graduation-cap"></i> ${item.class}</span>
+                    </div>
+                    <div class="problem-content">${item.question}</div>
+                    <button class="solution-toggle" onclick="toggleSolution(${index})">
+                        <i class="fa-solid fa-eye" id="icon-${index}"></i> <span id="text-btn-${index}">Lihat Pembahasan</span>
+                    </button>
+                    <div class="solution-box" id="sol-${index}">
+                        <strong>Pembahasan:</strong><br>${item.solution}
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+
+            // Re-render MathJax supaya rumus matematika ter-render dengan baik
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // Fungsi Filter Kategori dan Pencarian
+        function filterProblems() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = problems.filter(item => {
+                const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+                const matchesQuery = item.title.toLowerCase().includes(query) || 
+                                     item.question.toLowerCase().includes(query) || 
+                                     item.category.toLowerCase().includes(query);
+                return matchesCategory && matchesQuery;
+            });
+
+            renderProblems(filtered);
+        }
+
+        function setCategory(category, element) {
+            currentCategory = category;
+            
+            // Ubah class aktif pada chip kategori
+            document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+
+            filterProblems();
+        }
+
+        // Fungsi Tampilkan/Sembunyikan Pembahasan
+        function toggleSolution(index) {
+            const solBox = document.getElementById(`sol-${index}`);
+            const textBtn = document.getElementById(`text-btn-${index}`);
+            const iconBtn = document.getElementById(`icon-${index}`);
+
+            if (solBox.classList.contains('show')) {
+                solBox.classList.remove('show');
+                textBtn.innerText = "Lihat Pembahasan";
+                iconBtn.className = "fa-solid fa-eye";
+            } else {
+                solBox.classList.add('show');
+                textBtn.innerText = "Sembunyikan Pembahasan";
+                iconBtn.className = "fa-solid fa-eye-slash";
+                if (window.MathJax) {
+                    MathJax.typeset();
+                }
+            }
+        }
+
+        // Render awal saat halaman dimuat
+        window.onload = function() {
+            renderProblems(problems);
+        };
+    </script>
+</body>
+</html>
